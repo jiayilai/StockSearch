@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Homework 8</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="https://code.highcharts.com/stock/highstock.js"></script>
+	<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+	<script src="http://momentjs.com/downloads/moment-with-locales.min.js"></script>
+	<script src="http://stocksearchback.appspot.com/stocksearchfront.js"></script>
+	<style>
+		.bar {
+			width: 100%;
+			margin-bottom: 0px;
+			padding-bottom: 0px;
+		}
+		
+		#favoriteSection {
+			padding: 0px;
+		}
+		
+		#detailSection {
+			padding: 0px;
+		}
+		
+		.content {
+			border: 1px solid #E7E7E7;
+			width: 100%;
+		}
+		
+		table,
+		th,
+		td {
+			border-top: 1px solid #E3E3E3;
+			border-collapse: collapse;
+		}
+		
+		th,
+		td {
+			padding: 8px;
+			text-align: left;
+		}
+		
+		tr:nth-child(odd) {
+			background-color: #F0F0F0;
+		}
+		
+		.btn-primary {
+			margin-right: 10px;
+		}
+		
+		.off {
+			margin-right: 10px;
+		}
+		
+		.linkQuote {
+			cursor: pointer;
+		}
+		
+		#next:disabled {
+			cursor:url('https://cdn0.iconfinder.com/data/icons/mono2/100/not-allowed-24.png'), not-allowed;
+			pointer-events: all !important;
+		}
+		
+		/*
+		.tooltip> .tooltip-inner {
+			background: none;
+			color: #AAAAAA;
+			border: none;
+			position: relative;
+			font-size: 20px;
+			bottom: 20px;
+		}
+		
+		.tooltip.bottom > .tooltip-arrow {
+			display: none;
+		}
+*/
+		
+		#quote {
+			margin-right: 0px;
+		}
+	</style>
+</head>
+
+<body class="container" style="background:url('http://3.bp.blogspot.com/-DLTc1HpdEA8/Velb82V9KeI/AAAAAAAATLI/_DZcc5t2FXM/s1600/monotype-print-wall-color-texture-blue-background-hd-wallpaper.jpg');">
+	<br/>
+	<!--	form container -->
+	<div class="container" style="background-color:#FFFFFF;border-radius: 15px;">
+		<br>
+		<h4 class="text-center"><b>Stock Market Search</b></h4>
+		<form class="row" role="form" action="javascript:;">
+			<div style="text-align: left" class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+				<label for="symbol">Enter the stock name or symbol:<span style="color:red">*</span></label>
+			</div>
+			<div style="text-align: left" class="col-lg-6 col-md-5 col-sm-4 col-xs-12">
+				<input type="text" class="form-control" size="80%" id="symbol" name="symbol" placeholder="Apple Inc or APPL" required>
+				<div id="menu-container" style="position:absolute;width:80%"></div>
+			</div>
+			<div class="visible-xs col-xs-12">
+				<br/>
+			</div>
+			<div class="form-group col-lg-3 col-md-4 col-sm-5 col-xs-12">
+				<button type="submit" id="quote" class="btn btn-primary" href="#myCarousel"><span class="glyphicon glyphicon-search"></span>Get Quote</button>
+				<button type="button" class="btn btn-default" id="clear" data-slide-to="0" href="#myCarousel"><span class="glyphicon glyphicon-refresh"></span>Clear</button>
+			</div>
+		</form>
+		<div class="row" width="100%">
+			<div class="col-lg-6 col-lg-offset-3 col-md-5 col-md-offset-3 col-sm-4 col-sm-offset-3 col-xs-12">
+				<p id="validation" style="color:red;" hidden>Select a valida entry</p>
+			</div>
+			<div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
+				<p>Powered by:
+					<span id="logo"><img src="http://cs-server.usc.edu:45678/hw/hw8/images/mod-logo.png" width="140px"></span>
+				</p>
+			</div>
+		</div>
+		<br/>
+	</div>
+	<div class="container" style="padding:0px">
+		<hr color="white">
+	</div>
+	<!--	carousel container-->
+	<div class="container" style="background-color:#FFFFFF;border-radius: 15px;">
+		<div id="myCarousel" class="carousel slide" data-interval="false">
+			<div class="carousel-inner" role="listbox">
+				<!--	favorite section-->
+				<div class="item active container" id="favoriteSection" style="width:100%">
+					<br>
+					<!-- favorite list bar-->
+					<div class="container well well-sm bar">
+						<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4" style="padding:0px 5px;">
+							<p style="text-align:left;font-size:13px;"><b>Favorite List</b></p>
+						</div>
+						<span class="col-lg-6 col-md-5 col-sm-3 hidden-xs" style="text-align:right;padding-right:0px;font-size:15px;margin-top:10px;"></span>
+						<!-- favorite bar buttons-->
+						<div class="col-lg-4 col-md-5 col-sm-6 col-xs-8" style="padding-left:5px;padding-right:5px;text-align:right">
+							<span class="hidden-xs">Automatic Refresh:</span>
+							<input data-toggle="toggle" type="checkbox" id="toggle" height="40px" class="btn btn-default">
+							<button style="width:40px;height:36px;margin-right:-2px;" id="refresh" data-toggle="tooltip" title="Refresh" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
+							<button style="width:40px;height:36px;padding-left:8px;" id="next" href="#myCarousel" data-toggle="tooltip" title="Display Stock Information" data-slide-to="1" class="btn btn-default"  disabled><span class="glyphicon glyphicon-chevron-right"></span></button>
+						</div>
+					</div>
+					<!--				favorite content-->
+					<div class="container  content">
+						<div id="favoriteTable" style="overflow-x:auto"></div>
+					</div>
+				</div>
+				<!--	detail section-->
+				<div class="item container" id="detailSection" style="width:100%;">
+					<br>
+					<!--			     detail bar-->
+					<div class="container well well-sm bar">
+						<div class="col-xs-2" style="padding-left:4px;">
+							<button href="#myCarousel" data-slide="prev" class="btn btn-default" style="width:40px;height:36px;"><span class="glyphicon glyphicon-chevron-left"></span></button>
+						</div>
+						<span class="col-xs-8" style="text-align:center;font-size:15px"><b>Stock Details</b></span>
+					</div>
+					<div class="container content">
+						<!--current stock detail content-->
+						<br>
+
+						<!--tabs-->
+						<div>
+							<ul class="nav nav-pills col-sm-12 hidden-xs" style="text-align:left;padding-right:0px;">
+								<li class="active"><a data-toggle="pill" href="#Stock"><span class="glyphicon glyphicon-dashboard"></span>Current Stock</a></li>
+								<li><a data-toggle="pill" href="#Charts" class="chartPill"><span class="glyphicon glyphicon-stats"></span>Historical Charts</a></li>
+								<li><a data-toggle="pill" href="#News"><span class="glyphicon glyphicon-link"></span>News Feeds</a></li>
+							</ul>
+							<ul class="nav nav-pills col-sm-12 visible-xs" style="text-align:left;padding-right:0px;">
+								<li class="active"><a data-toggle="pill" href="#Stock"><span class="glyphicon glyphicon-dashboard"></span>Stock</a></li>
+								<li><a data-toggle="pill" href="#Charts" class="chartPill"><span class="glyphicon glyphicon-stats"></span>Charts</a></li>
+								<li><a data-toggle="pill" href="#News"><span class="glyphicon glyphicon-link"></span>News</a></li>
+							</ul>
+						</div>
+						<br>
+						<br>
+						<div style="width:100%">
+							<hr/>
+						</div>
+						<div class="tab-content" style="width:100%">
+							<div id="Stock" class="tab-pane fade in active" style="width:100%">
+								<div>
+									<div class="col-xs-6">
+										<h5><b>Stock Details</b></h5>
+									</div>
+									<div class="col-xs-6" style="text-align:right">
+										<img src="https://www.seeklogo.net/wp-content/uploads/2011/06/facebook-icon-logo-vector.png" width="36px" id="facebook" style="position:relative;right:10px;">
+										<button class="btn btn-default" style="width:40px;color:white;position:relative;right:10px;" id="star"><span class="glyphicon glyphicon glyphicon-star"></span></button>
+									</div>
+								</div>
+								<div>
+									<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="table"></div>
+									<div class="col-xs-12 visible-xs visible-sm">
+										<br/>
+									</div>
+									<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="yahoo"></div>
+								</div>
+							</div>
+							<div id="Charts" class="tab-pane fade">
+								<div id="chartContainer" class="col-xs-12"></div>
+							</div>
+							<div id="News" class="tab-pane fade">
+								<div class="newsContainer col-xs-12"></div>
+							</div>
+							<br>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+	</div>
+</body>
+
+</html>
